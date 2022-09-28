@@ -1,7 +1,4 @@
-now = moment();
-console.log(now);
-
-test = moment().format('kk');
+test = moment().format('k');
 console.log(test);
 
 test2 = moment().format('MMMM Do YYYY, h:mm a');
@@ -35,8 +32,27 @@ let plannerElArray = [
   plan5pm,
 ];
 
-console.log(plan2pm);
-console.log(plannerElArray);
-// function time( ) {
 
-// }
+function timeChange() {
+  let today = moment();
+
+  $('#currentDay').text(today.format('dddd, MMMM Do YYYY, h:mm a'));
+
+  let now = moment().format('k');
+
+  for (let i = 0; i < plannerElArray.length; i++) {
+    plannerElArray[i].removeClass('future past present');
+
+    if (now > plannerElArray[i].data('hour')) {
+      plannerElArray[i].addClass('past');
+    } else if (now === plannerElArray[i].attr('data-hour')) {
+      plannerElArray[i].addClass('present');
+    } else {
+      plannerElArray[i].addClass('future');
+    }
+  }
+  console.log(now);
+}
+
+timeChange();
+setInterval(timeChange, 1000);
