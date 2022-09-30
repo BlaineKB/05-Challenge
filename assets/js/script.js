@@ -5,7 +5,6 @@ test2 = moment().format('MMMM Do YYYY, h:mm a');
 console.log(test2);
 
 // Declares the textarea elements and packages them into an array
-
 let plan8am = $('#8am');
 let plan9am = $('#9am');
 let plan10am = $('#10am');
@@ -32,14 +31,15 @@ let plannerElArray = [
   plan5pm,
 ];
 
-
+// Function that updates the time on the page and changes the status of the timeblocks
 function timeChange() {
   let today = moment();
 
+  // Updates time in the header using moment.js
   $('#currentDay').text(today.format('dddd, MMMM Do YYYY, h:mm a'));
 
+  // A for loop that iterates through the timeblocks and changes their textarea background color based on whether they are in the 'past', 'present', or 'future'
   let now = moment().format('k');
-
   for (let i = 0; i < plannerElArray.length; i++) {
     plannerElArray[i].removeClass('future past present');
 
@@ -54,5 +54,18 @@ function timeChange() {
   console.log(now);
 }
 
+// Function that maintains user click events and saves the text for individual time blocks to the local storage
+function onClick(event) {
+  event.preventDefault();
+
+  let btnClick = $(event.currentTarget);
+  let targetPlan = btnClick.siblings('textarea');
+  let targetTimeBlock = targetPlan.data('hour');
+
+  localStorage.setItem("timeblock " + targetTimeBlock, targetPlan.val());
+}
+
 timeChange();
 setInterval(timeChange, 1000);
+
+saveBtn.on('click', onClick);
