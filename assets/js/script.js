@@ -1,8 +1,25 @@
-test = moment().format('k');
-console.log(test);
+// Function that updates the time on the page and changes the status of the timeblocks
+function timeChange() {
+  let today = moment();
 
-test2 = moment().format('MMMM Do YYYY, h:mm a');
-console.log(test2);
+  // Updates time in the header using moment.js
+  $('#currentDay').text(today.format('dddd, MMMM Do YYYY, h:mm a'));
+
+  // A for loop that iterates through the timeblocks and changes their textarea background color based on whether they are in the 'past', 'present', or 'future'
+  let now = moment().format('k');
+  for (let i = 0; i < plannerElArray.length; i++) {
+    plannerElArray[i].removeClass('future past present');
+
+    if (now > plannerElArray[i].data('hour')) {
+      plannerElArray[i].addClass('past');
+    } else if (now === plannerElArray[i].attr('data-hour')) {
+      plannerElArray[i].addClass('present');
+    } else {
+      plannerElArray[i].addClass('future');
+    }
+  }
+}
+
 
 // Declares the textarea elements and packages them into an array
 let plan8am = $('#8am');
@@ -31,27 +48,15 @@ let plannerElArray = [
   plan5pm,
 ];
 
-// Function that updates the time on the page and changes the status of the timeblocks
-function timeChange() {
-  let today = moment();
+renderSavedData();
+timeChange();
+setInterval(timeChange, 1000);
 
-  // Updates time in the header using moment.js
-  $('#currentDay').text(today.format('dddd, MMMM Do YYYY, h:mm a'));
-
-  // A for loop that iterates through the timeblocks and changes their textarea background color based on whether they are in the 'past', 'present', or 'future'
-  let now = moment().format('k');
-  for (let i = 0; i < plannerElArray.length; i++) {
-    plannerElArray[i].removeClass('future past present');
-
-    if (now > plannerElArray[i].data('hour')) {
-      plannerElArray[i].addClass('past');
-    } else if (now === plannerElArray[i].attr('data-hour')) {
-      plannerElArray[i].addClass('present');
-    } else {
-      plannerElArray[i].addClass('future');
-    }
+// Function that displays saved data from local storage
+function renderSavedData() {
+  for (let el of plannerElArray) {
+    el.val(localStorage.getItem("timeblock " + el.data("hour")));
   }
-  console.log(now);
 }
 
 // Function that maintains user click events and saves the text for individual time blocks to the local storage
@@ -65,7 +70,5 @@ function onClick(event) {
   localStorage.setItem("timeblock " + targetTimeBlock, targetPlan.val());
 }
 
-timeChange();
-setInterval(timeChange, 1000);
 
 saveBtn.on('click', onClick);
